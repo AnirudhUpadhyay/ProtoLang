@@ -10,11 +10,13 @@
 #include "llvm/IR/Module.h"
 #include "llvm/IR/Value.h"
 
+//Global variables for Lexer.
 std::string IdentifierStr;
 double NumVal;
 int CurTok;
 std::map<char, int> BinopPrecedence;
 
+//Global Variables for Codegen.
 std::unique_ptr<llvm::LLVMContext> TheContext;
 std::unique_ptr<llvm::IRBuilder<>> Builder;
 std::unique_ptr<llvm::Module> TheModule;
@@ -30,8 +32,9 @@ int main(void)
 	fprintf(stderr, "ready> ");
 	getNextToken();
 
+	InitializeModule();
 	MainLoop();
+	TheModule->print(llvm::errs(), nullptr);
 
 	return 0;
 }
-

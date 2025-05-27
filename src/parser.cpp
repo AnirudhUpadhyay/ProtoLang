@@ -3,10 +3,20 @@
 #include <string>
 #include <map>
 
+#include "llvm/IR/LLVMContext.h"
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/Module.h"
+
+//Global state.
 extern std::string IdentifierStr;
 extern int CurTok;
 extern double NumVal;
 extern std::map<char, int> BinopPrecedence;
+
+//Global state.
+extern std::unique_ptr<llvm::LLVMContext> TheContext;
+extern std::unique_ptr<llvm::IRBuilder<>> Builder;
+extern std::unique_ptr<llvm::Module> TheModule;
 
 //Error handling functions.
 std::unique_ptr<ExprAST> LogError(const char* Str)
@@ -177,6 +187,67 @@ std::unique_ptr<FunctionAST> ParseTopLevelExpr() {
   return nullptr;
 }
 
+//Top-level parsing functions.
+void InitializeModule()
+{
+	TheContext = std::make_unique<llvm::LLVMContext>();
+	TheModule = std::make_unique<llvm::Module>("mu cool jit", *TheContext);
+	Builder = std::make_unique<llvm::IRBuilder<>>(*TheContext);
+}
+
+void HandleDefinition()
+{
+	if (auto FnAST = ParseDefinition())
+	{
+		if (auto* FnIR = FnAST->codegen())
+		{
+			fprintf(stderr, "Read function definiton: ");
+			FnIR->print(llvm::errs());
+			fprintf(stderr, "\n");
+		}
+	}
+	else
+	{
+		getNextToken();
+	}
+}
+
+void HandleExtern()
+{
+	if (auto ProtoAST = ParseExtern()) 
+	{
+		if (auto* FnIR = ProtoAST->codegen())
+		{
+			fprintf(stderr, "Read extern: ");
+			FnIR->print(llvm::errs());
+			fprintf(stderr, "\n");
+		}
+	}
+	else
+	{
+		// Skip token for error recovery.
+		getNextToken();
+	}
+}
+
+void HandleTopLevelExpression() {
+	// Evaluate a top-level expression into an anonymous function.
+	if (auto FnAST = ParseTopLevelExpr())
+	{
+		if (auto* FnIR = FnAST->codegen())
+		{
+			fprintf(stderr, "Read top-level expression: ");
+			FnIR->print(llvm::errs());
+			fprintf(stderr, "\n");
+			FnIR->eraseFromParent();
+		}
+	}
+	else
+	{
+		getNextToken();
+	}
+}
+
 int GetTokPrecedence()
 {
 	if (!isascii(CurTok)) return -1;
@@ -184,32 +255,4 @@ int GetTokPrecedence()
 	int TokPrec = BinopPrecedence[CurTok];
 	if (TokPrec <= 0) return -1;
 	return TokPrec;
-}
-
-void HandleDefinition() {
-  if (ParseDefinition()) {
-    fprintf(stderr, "Parsed a function definition.\n");
-  } else {
-    // Skip token for error recovery.
-    getNextToken();
-  }
-}
-
-void HandleExtern() {
-  if (ParseExtern()) {
-    fprintf(stderr, "Parsed an extern\n");
-  } else {
-    // Skip token for error recovery.
-    getNextToken();
-  }
-}
-
-void HandleTopLevelExpression() {
-  // Evaluate a top-level expression into an anonymous function.
-  if (ParseTopLevelExpr()) {
-    fprintf(stderr, "Parsed a top-level expr\n");
-  } else {
-    // Skip token for error recovery.
-    getNextToken();
-  }
 }

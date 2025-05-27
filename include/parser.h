@@ -20,6 +20,7 @@ std::unique_ptr<PrototypeAST> ParseExtern();
 std::unique_ptr<FunctionAST> ParseTopLevelExpr();
 
 //Top-level parsing functions.
+void InitializeModule();
 void HandleDefinition();
 void HandleExtern();
 void HandleTopLevelExpression();

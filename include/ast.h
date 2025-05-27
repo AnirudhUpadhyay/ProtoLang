@@ -1,10 +1,13 @@
 #ifndef __AST_H__
 #define __AST_H__
+
 #include <string>
 #include <vector>
 #include <memory>
 #include "llvm/IR/Value.h"
 #include "llvm/IR/Function.h"
+
+llvm::Value* LogErrorV(const char *Str);
 
 class ExprAST
 {
@@ -64,6 +67,7 @@ class PrototypeAST
 	public:
 		PrototypeAST(const std::string &a_Name, std::vector<std::string> a_Args);
 		llvm::Function *codegen();
+		const std::string& getName() const;
 };
 
 class FunctionAST
