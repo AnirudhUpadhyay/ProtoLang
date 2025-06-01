@@ -1,6 +1,11 @@
 #Object files.
 *.o
 
-#Executable
+#Executable.
 main
 *.out
+
+#Ignore vim swap files
+*~
+*.swp
+*.swo
