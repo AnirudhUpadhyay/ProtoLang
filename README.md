@@ -3,6 +3,17 @@
   <h1>ProtoLang</h1>
   <strong>Exploring Compiler Internals</strong>
 </div>
+
+<div align="center">
+<br>
+
+[![Static Badge](https://img.shields.io/badge/Language-C%2B%2B-red)](https://isocpp.org)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/t/AnirudhUpadhyay/protoLang)
+![GitHub last commit](https://img.shields.io/github/last-commit/AnirudhUpadhyay/protoLang)
+[![Static Badge](https://img.shields.io/badge/%20LinkedIn-Anirudha_Upadhyay-blue)](https://www.linkedin.com/in/anirudhupadhyay/)
+
+</div>
+
 <br>
 <p>Welcome to the ProtoLang codebase. ProtoLang is a LLVM-based prototype programming language that is built with learning in mind. I am excited to have you here. The only way to learn programming is to build, so dive in, break things, and learn as you go!</p>
 <br>
